@@ -1,0 +1,202 @@
+{
+ "1": {
+  "class_type": "UNETLoader",
+  "inputs": {
+   "unet_name": "minimax_h3_ref2va_pruned_nvfp4.safetensors",
+   "weight_dtype": "default"
+  }
+ },
+ "3": {
+  "class_type": "MiniMaxH3SigmaShift",
+  "inputs": {
+   "model": [
+    "1",
+    0
+   ],
+   "shift_video": 12,
+   "shift_audio": 3
+  }
+ },
+ "4": {
+  "class_type": "CLIPLoader",
+  "inputs": {
+   "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+   "type": "minimax",
+   "device": "cpu"
+  }
+ },
+ "5": {
+  "class_type": "VAELoader",
+  "inputs": {
+   "vae_name": "minimax_h3_video_vae_fp16.safetensors"
+  }
+ },
+ "6": {
+  "class_type": "LoadVideo",
+  "inputs": {
+   "file": "previs_shot16.mp4"
+  }
+ },
+ "16": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "SHOT16_C06_face.png"
+  }
+ },
+ "17": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "SHOT16_C15_face.png"
+  }
+ },
+ "18": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "SHOT16_C10_face.png"
+  }
+ },
+ "7": {
+  "class_type": "MiniMaxH3ReferenceToVideo",
+  "inputs": {
+   "clip": [
+    "4",
+    0
+   ],
+   "prompt": "<Video 1> <Picture 1> <Picture 2> <Picture 3> <Picture 4> In daytime, interior of a small modest north-facing rented room in a northern Chinese city in the 2010s, a very simple home wedding celebration with no banquet hall and no party decorations, a plain folding wooden dining table covered with a light cream tablecloth, three wooden chairs, a single window on the back wall with soft daylight and a simple curtain, a small lamp sitting on the windowsill, a pair of bowls and a thermos on the table, a low wooden sideboard against the back right wall, the layout of table, chairs, window, curtain and sideboard matching the reference <Picture 4>. Three people only. A Chinese woman in her late twenties with the same face exactly matching the reference portrait <Picture 1>, neat dark shoulder-length hair, wearing a light cream short jacket over a plain blouse and dark indigo trousers. A young Chinese man in his mid-twenties with the same face exactly matching the reference portrait <Picture 2>, short black hair, distinctive slim round black-framed glasses, a cream V-neck sweater over a pale blue collared shirt, dark grey trousers, white sneakers. A middle-aged Chinese woman with the same face exactly matching the reference portrait <Picture 3>, short dark hair with a few grey strands, wearing a dark maroon formal jacket with one small brooch pinned on the left side of her chest, no apron, dark trousers. At the start of the shot the three of them are already standing around the table: the mother on the left of the frame, the young woman in the middle, the young man further back on the right; the mother's small brooch is visibly tilted at an angle, she has stopped halfway through a sentence and lowers her head slightly, the young woman looks at her, an old faded red hair ribbon lies flat on the tablecloth in front of her, and a small plain handbag with an open mouth rests empty on the seat of the chair beside her. Over the course of the shot, in one continuous slow gentle sequence: the young woman gradually leans toward her mother, turns her head and slowly raises one hand to the tilted brooch, and steadily straightens the brooch until it sits level, while the mother lowers her eyes to look at it; the young woman then lets her hand move down and gently takes and holds her mother's hand, giving a very small quiet nod, and the mother slowly raises her head until the two of them are looking at each other. Then, well before the shot ends, the young woman turns back toward the tabletop and performs one clear uninterrupted action with the old red hair ribbon: she reaches down and picks the ribbon up off the tablecloth with one hand, folds it neatly between both hands so it becomes visibly shorter, carries the folded ribbon in her hand across to the open mouth of the small handbag on the chair seat, lowers her hand and slips the folded ribbon down into the bag, opens her fingers to release it inside the bag, and slowly draws her hand back out of the bag empty. The ribbon goes from lying flat on the tablecloth, to being folded and held in her hand, to being completely hidden inside the handbag; from the moment it enters the bag it is never seen again. By the end of the shot the small handbag stays where it is beside the chair back within easy reach of her hand and now holds the ribbon, the ribbon is completely out of sight inside the bag, there is no ribbon anywhere on the tablecloth and the tabletop in front of her is bare, her two hands are empty and relaxed at her sides, the brooch is straight, and the three of them stand quietly together in the soft daylight. Throughout the shot the table, the tablecloth, the chairs, the window, the curtain, the bowls, the thermos, the windowsill lamp and the handbag stay in the same positions and keep the same appearance; the brooch only rotates gradually from tilted to straight, the ribbon never floats unsupported in the air and is always either lying on the tablecloth or held in her hand until it is put inside the bag, the ribbon is never set back down on the table and never placed back on the tablecloth after being picked up, the ribbon must not reappear after it is put into the bag, the only object allowed to disappear from view in this shot is the ribbon because it is tucked inside the handbag, the bag does not move, all three people's feet stay on the floor, their hands and arms move gradually with no sudden movement, no abrupt pose changes and no hard cuts, every transition is gradual and continuous, no fourth person appears. All three faces are clear and detailed and remain stable, the young woman's face exactly matching <Picture 1>, the young man's face exactly matching <Picture 2> with his round black-framed glasses present at all times, the mother's face exactly matching <Picture 3>; none of the three faces changes, ages, or swaps with another. Daytime lighting: soft cool daylight through the window, steady gentle warm light over the table, no harsh spotlight, no lens flare. Refined watercolor concept-art animation style, delicate fine ink linework, loose transparent watercolor washes, granular cold-press paper texture, restrained indigo grey-green and warm cream palette, hand painted, quiet unhurried atmosphere, gentle seamless motion. Slow subtle camera push-in, very slight handheld sway.",
+   "width": 1280,
+   "height": 720,
+   "length": 192,
+   "ref_image_size": "max",
+   "vae": [
+    "5",
+    0
+   ],
+   "ref_videos": {
+    "ref_video_1": [
+     "6",
+     0
+    ]
+   },
+   "ref_images": {
+    "ref_image_1": [
+     "16",
+     0
+    ],
+    "ref_image_2": [
+     "17",
+     0
+    ],
+    "ref_image_3": [
+     "18",
+     0
+    ],
+    "ref_image_4": [
+     "19",
+     0
+    ]
+   }
+  }
+ },
+ "8": {
+  "class_type": "BasicScheduler",
+  "inputs": {
+   "model": [
+    "3",
+    0
+   ],
+   "scheduler": "simple",
+   "steps": 20,
+   "denoise": 1.0
+  }
+ },
+ "9": {
+  "class_type": "RandomNoise",
+  "inputs": {
+   "noise_seed": 2026111417
+  }
+ },
+ "10": {
+  "class_type": "BasicGuider",
+  "inputs": {
+   "model": [
+    "3",
+    0
+   ],
+   "conditioning": [
+    "7",
+    0
+   ]
+  }
+ },
+ "11": {
+  "class_type": "KSamplerSelect",
+  "inputs": {
+   "sampler_name": "euler"
+  }
+ },
+ "12": {
+  "class_type": "SamplerCustomAdvanced",
+  "inputs": {
+   "noise": [
+    "9",
+    0
+   ],
+   "guider": [
+    "10",
+    0
+   ],
+   "sampler": [
+    "11",
+    0
+   ],
+   "sigmas": [
+    "8",
+    0
+   ],
+   "latent_image": [
+    "7",
+    1
+   ]
+  }
+ },
+ "13": {
+  "class_type": "VAEDecode",
+  "inputs": {
+   "samples": [
+    "12",
+    0
+   ],
+   "vae": [
+    "5",
+    0
+   ]
+  }
+ },
+ "14": {
+  "class_type": "CreateVideo",
+  "inputs": {
+   "images": [
+    "13",
+    0
+   ],
+   "fps": 24
+  }
+ },
+ "15": {
+  "class_type": "SaveVideo",
+  "inputs": {
+   "video": [
+    "14",
+    0
+   ],
+   "filename_prefix": "h3_r2v_shot16b",
+   "format": "auto"
+  }
+ },
+ "19": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "SHOT16_E09_table.png"
+  }
+ }
+}

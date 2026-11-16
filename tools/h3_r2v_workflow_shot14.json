@@ -1,0 +1,192 @@
+{
+ "1": {
+  "class_type": "UNETLoader",
+  "inputs": {
+   "unet_name": "minimax_h3_ref2va_pruned_nvfp4.safetensors",
+   "weight_dtype": "default"
+  }
+ },
+ "3": {
+  "class_type": "MiniMaxH3SigmaShift",
+  "inputs": {
+   "model": [
+    "1",
+    0
+   ],
+   "shift_video": 12,
+   "shift_audio": 3
+  }
+ },
+ "4": {
+  "class_type": "CLIPLoader",
+  "inputs": {
+   "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+   "type": "minimax",
+   "device": "cpu"
+  }
+ },
+ "5": {
+  "class_type": "VAELoader",
+  "inputs": {
+   "vae_name": "minimax_h3_video_vae_fp16.safetensors"
+  }
+ },
+ "6": {
+  "class_type": "LoadVideo",
+  "inputs": {
+   "file": "previs_shot14.mp4"
+  }
+ },
+ "16": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "SHOT14_C15_face.png"
+  }
+ },
+ "17": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "SHOT14_C05_face.png"
+  }
+ },
+ "18": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "SHOT14_E10_kitchen.png"
+  }
+ },
+ "7": {
+  "class_type": "MiniMaxH3ReferenceToVideo",
+  "inputs": {
+   "clip": [
+    "4",
+    0
+   ],
+   "prompt": "<Video 1> <Picture 1> <Picture 2> <Picture 3> At night, interior of a small modest rented kitchen in a northern Chinese city in the 2010s, a sink and a tiled counter under a window, a wall shelf with stacked ceramic bowls and jars, a small square wooden dining table with two wooden chairs, a bare hanging bulb lit warmly, dark blue evening outside the window, warm lamplight with soft shadows and a faint cool bounce, the layout of sink, window, shelf, table and chairs matching the reference <Picture 3>. A young Chinese man in his mid-twenties with the same face exactly matching the reference portrait <Picture 1>, short black hair, round black-framed glasses, a cream V-neck sweater over a pale blue collared shirt, dark grey trousers, white sneakers. A young Chinese woman in her mid-twenties with the same face exactly matching the reference portrait <Picture 2>, shoulder-length black hair, wearing a pale grey button-up shirt over a white tee and dark trousers. At the start of the shot the man stands at the sink washing bowls, leaning slightly forward with his hands over the basin; the woman enters from the right and comes to stand beside him at his right, and the two of them stand side by side at the counter. Over the course of the shot, in one continuous slow gentle sequence: she turns her head slightly toward him and speaks quietly, her head lowering as she talks about her father, while his scrubbing motion gradually slows until his hands come to rest above the sink; he reaches up and turns off the tap so the running water stops, then lowers his arm smoothly back to his side and turns his head toward her; they stand still together for a moment and she slowly raises her head; he then walks around to the chair behind the table, pulls that chair out a little and raises a hand to offer her the seat, while she walks to stand in front of the chair, rests one hand on the table edge and lowers her head; she sits down, and as she sits he walks around the other side of the table and sits down on the chair opposite her. By the end of the shot the two of them are seated facing each other across the small table, quiet and still, the water is off, the table and both chairs remain in place. Throughout the shot the sink, the window, the shelf, the bowls, the table and both chairs stay in the same positions and keep the same appearance, the bowls and dishes never float in the air and never disappear, both people's feet stay on the floor and their seated height matches the chair seats, no sudden movement, no abrupt pose changes, every transition is gradual and continuous, no other person appears. Both faces are clear and detailed, the man's face exactly matching <Picture 1> with his round black-framed glasses, the woman's face exactly matching <Picture 2>, neither face changes or swaps with the other. Warm light from the bare hanging bulb with soft shadows and a faint cool bounce from the dark evening window. Refined watercolor concept-art animation style, delicate fine ink linework, loose transparent watercolor washes, granular cold-press paper texture, restrained indigo grey-green and warm cream palette, hand painted, quiet unhurried atmosphere, gentle seamless motion. Slow subtle camera push-in, very slight handheld sway.",
+   "width": 1280,
+   "height": 720,
+   "length": 192,
+   "ref_image_size": "max",
+   "vae": [
+    "5",
+    0
+   ],
+   "ref_videos": {
+    "ref_video_1": [
+     "6",
+     0
+    ]
+   },
+   "ref_images": {
+    "ref_image_1": [
+     "16",
+     0
+    ],
+    "ref_image_2": [
+     "17",
+     0
+    ],
+    "ref_image_3": [
+     "18",
+     0
+    ]
+   }
+  }
+ },
+ "8": {
+  "class_type": "BasicScheduler",
+  "inputs": {
+   "model": [
+    "3",
+    0
+   ],
+   "scheduler": "simple",
+   "steps": 20,
+   "denoise": 1.0
+  }
+ },
+ "9": {
+  "class_type": "RandomNoise",
+  "inputs": {
+   "noise_seed": 2026111214
+  }
+ },
+ "10": {
+  "class_type": "BasicGuider",
+  "inputs": {
+   "model": [
+    "3",
+    0
+   ],
+   "conditioning": [
+    "7",
+    0
+   ]
+  }
+ },
+ "11": {
+  "class_type": "KSamplerSelect",
+  "inputs": {
+   "sampler_name": "euler"
+  }
+ },
+ "12": {
+  "class_type": "SamplerCustomAdvanced",
+  "inputs": {
+   "noise": [
+    "9",
+    0
+   ],
+   "guider": [
+    "10",
+    0
+   ],
+   "sampler": [
+    "11",
+    0
+   ],
+   "sigmas": [
+    "8",
+    0
+   ],
+   "latent_image": [
+    "7",
+    1
+   ]
+  }
+ },
+ "13": {
+  "class_type": "VAEDecode",
+  "inputs": {
+   "samples": [
+    "12",
+    0
+   ],
+   "vae": [
+    "5",
+    0
+   ]
+  }
+ },
+ "14": {
+  "class_type": "CreateVideo",
+  "inputs": {
+   "images": [
+    "13",
+    0
+   ],
+   "fps": 24
+  }
+ },
+ "15": {
+  "class_type": "SaveVideo",
+  "inputs": {
+   "video": [
+    "14",
+    0
+   ],
+   "filename_prefix": "h3_r2v_shot14",
+   "format": "auto"
+  }
+ }
+}

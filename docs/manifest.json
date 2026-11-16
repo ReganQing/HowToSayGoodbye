@@ -1,0 +1,15 @@
+{
+  "files": 219,
+  "scripts_py": 148,
+  "workflow_json": 41,
+  "bytes": 1766507,
+  "categories": {
+    "modeling": 65,
+    "blender": 45,
+    "editing": 7,
+    "qc": 14,
+    "workflows": 17
+  },
+  "sanitized_paths": 41,
+  "scan_clean": true
+}

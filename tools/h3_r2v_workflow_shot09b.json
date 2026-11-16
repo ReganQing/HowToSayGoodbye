@@ -1,0 +1,182 @@
+{
+ "1": {
+  "class_type": "UNETLoader",
+  "inputs": {
+   "unet_name": "minimax_h3_ref2va_pruned_nvfp4.safetensors",
+   "weight_dtype": "default"
+  }
+ },
+ "3": {
+  "class_type": "MiniMaxH3SigmaShift",
+  "inputs": {
+   "model": [
+    "1",
+    0
+   ],
+   "shift_video": 12,
+   "shift_audio": 3
+  }
+ },
+ "4": {
+  "class_type": "CLIPLoader",
+  "inputs": {
+   "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+   "type": "minimax",
+   "device": "cpu"
+  }
+ },
+ "5": {
+  "class_type": "VAELoader",
+  "inputs": {
+   "vae_name": "minimax_h3_video_vae_fp16.safetensors"
+  }
+ },
+ "6": {
+  "class_type": "LoadVideo",
+  "inputs": {
+   "file": "previs_shot09.mp4"
+  }
+ },
+ "16": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "SHOT09_dad_face.png"
+  }
+ },
+ "17": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "SHOT06_C05_face.png"
+  }
+ },
+ "7": {
+  "class_type": "MiniMaxH3ReferenceToVideo",
+  "inputs": {
+   "clip": [
+    "4",
+    0
+   ],
+   "prompt": "<Video 1> <Picture 1> The frame is filled by an old photograph seen up close, filling the entire screen: inside a small cheap eatery in a southern Chinese factory town in the early 2000s, warm tungsten bulb light, several Chinese male factory workers in their thirties sitting on low plastic stools around a low square wooden table eating dinner, steamed rice bowls, stir-fried dishes, a steel thermos, folded newspapers, and half a bottle of orange soda standing on the table. At the right side of the photo, a young Chinese father in his thirties with a square honest face and neat short black hair, wearing a navy blue work jacket over a white shirt, is laughing with his eyes crinkled into crescents, mouth open mid-sentence as if telling a joke, a pair of wooden chopsticks resting on the rim of his rice bowl. CRITICAL: this is a frozen still photograph. Every person in the photo stays in exactly the same pose and exactly the same expression from the first frame to the last frame, totally motionless, frozen in time, no one turns their head, no one changes expression, no one moves at all, no blinking, the laughter stays at the exact same level, identical frozen moment held for the whole shot. The only things that change across the shot: the camera pushes in very slowly and smoothly toward the laughing young father on the right, ending in a closer view of his smiling face, and a very faint wisp of steam drifts gently upward from the hot rice bowls. Nothing else moves. The young father's face stays exactly matching the reference portrait <Picture 1> throughout, identical face in every frame. Slightly faded warm film-photo colors, soft halation around the lamp, muted nostalgic palette, refined watercolor concept-art animation style, delicate fine ink linework, loose transparent watercolor washes, granular cold-press paper texture, quiet warm nostalgic atmosphere, gentle seamless motion, absolutely no sudden changes.",
+   "width": 1280,
+   "height": 720,
+   "length": 192,
+   "ref_image_size": "max",
+   "vae": [
+    "5",
+    0
+   ],
+   "ref_videos": {
+    "ref_video_1": [
+     "6",
+     0
+    ]
+   },
+   "ref_images": {
+    "ref_image_1": [
+     "16",
+     0
+    ],
+    "ref_image_2": [
+     "17",
+     0
+    ]
+   }
+  }
+ },
+ "8": {
+  "class_type": "BasicScheduler",
+  "inputs": {
+   "model": [
+    "3",
+    0
+   ],
+   "scheduler": "simple",
+   "steps": 20,
+   "denoise": 1.0
+  }
+ },
+ "9": {
+  "class_type": "RandomNoise",
+  "inputs": {
+   "noise_seed": 2026110804
+  }
+ },
+ "10": {
+  "class_type": "BasicGuider",
+  "inputs": {
+   "model": [
+    "3",
+    0
+   ],
+   "conditioning": [
+    "7",
+    0
+   ]
+  }
+ },
+ "11": {
+  "class_type": "KSamplerSelect",
+  "inputs": {
+   "sampler_name": "euler"
+  }
+ },
+ "12": {
+  "class_type": "SamplerCustomAdvanced",
+  "inputs": {
+   "noise": [
+    "9",
+    0
+   ],
+   "guider": [
+    "10",
+    0
+   ],
+   "sampler": [
+    "11",
+    0
+   ],
+   "sigmas": [
+    "8",
+    0
+   ],
+   "latent_image": [
+    "7",
+    1
+   ]
+  }
+ },
+ "13": {
+  "class_type": "VAEDecode",
+  "inputs": {
+   "samples": [
+    "12",
+    0
+   ],
+   "vae": [
+    "5",
+    0
+   ]
+  }
+ },
+ "14": {
+  "class_type": "CreateVideo",
+  "inputs": {
+   "images": [
+    "13",
+    0
+   ],
+   "fps": 24
+  }
+ },
+ "15": {
+  "class_type": "SaveVideo",
+  "inputs": {
+   "video": [
+    "14",
+    0
+   ],
+   "filename_prefix": "h3_r2v_shot09b",
+   "format": "auto"
+  }
+ }
+}

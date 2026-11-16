@@ -1,0 +1,192 @@
+{
+  "1": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "minimax_h3_ref2va_pruned_nvfp4.safetensors",
+      "weight_dtype": "default"
+    }
+  },
+  "3": {
+    "class_type": "MiniMaxH3SigmaShift",
+    "inputs": {
+      "model": [
+        "1",
+        0
+      ],
+      "shift_video": 12,
+      "shift_audio": 3
+    }
+  },
+  "4": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "type": "minimax",
+      "device": "cpu"
+    }
+  },
+  "5": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "minimax_h3_video_vae_fp16.safetensors"
+    }
+  },
+  "6": {
+    "class_type": "LoadVideo",
+    "inputs": {
+      "file": "previs_shot27.mp4"
+    }
+  },
+  "16": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "SHOT27_C16_face.png"
+    }
+  },
+  "17": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "SHOT27_C17_face.png"
+    }
+  },
+  "18": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "SHOT27_E12_stage.png"
+    }
+  },
+  "7": {
+    "class_type": "MiniMaxH3ReferenceToVideo",
+    "inputs": {
+      "clip": [
+        "4",
+        0
+      ],
+      "prompt": "<Video 1> <Picture 1> <Picture 2> <Picture 3> On a school auditorium stage seen from the wings, with heavy deep indigo-red stage curtains drawn closed in soft vertical folds, three warm amber overhead stage lights, side curtains, a few stacked wooden chairs backstage, a narrow glimpse of blurred empty dark-red audience seat backs beyond the front edge, and a simple wooden stage floor, all arranged as in the reference <Picture 3>. Two people only. A Chinese adult woman with the same face exactly matching the reference portrait <Picture 1>, dark shoulder-length hair, wearing a plain cream cardigan, the mother. A Chinese little girl with the same face exactly matching the reference portrait <Picture 2>, two neat dark braids, wearing a pale cream dress with red shoulder straps, her daughter. On a small wooden table beside the stacked chairs backstage there is an open keepsake box containing two faded old red hair ribbons with tiny white flowers at their ends; these two old ribbons are dull dark red, clearly different from the new ones, and they remain inside the open box, visible and untouched, in exactly the same place for the whole shot. They are never picked up, never replaced, never turned into a new ribbon and never disappear. At the very start of the shot the mother is already holding a pair of fresh bright red hair ribbons with no white flowers at their ends, clearly visible in her hands; this new pair never appears out of nowhere. In the first second of the shot, in one continuous slow gentle sequence, she raises the new pair, reaches to the girl's two braids, and ties one fresh red ribbon around the end of each braid, the ribbons moving continuously from her hands to the two braid tips with no jump, no cut and no teleporting. From that moment on the two fresh red ribbons stay tied at the braid tips, while the two faded old ribbons with white flowers stay in the open box; the old and the new are never mixed up and never swapped. The girl then touches one braid and her face grows quiet and close to tears. The mother crouches down slowly in front of her and smooths the hem of her dress flat with both hands, without asking her to hold back her tears. The girl wipes her own face with her hand and looks up. The heavy curtains begin to part slowly from the very first frames and continue to open toward both sides smoothly and continuously through the whole shot, gradually revealing warm stage light and a soft blurred glimpse of the audience seats beyond, with no sudden opening, no jump and no cut; the curtain panels stay visible at both sides and never vanish. She walks forward a few steps through the widening gap toward the stage front and glances once toward the audience seats. The warm overhead light grows gently warmer and brighter, continuous with no step, no hard-edged light patch and no lens flare. At the end she slowly lifts one arm, and the fresh red ribbons at her braid tips catch the warm light and give one soft brief flash as they move. Throughout the shot there is no flashback, no memory image, no funeral, no hospital room, no sickbed, no sorting-through-belongings scene, no hard cut, no cross-space transition and no other time or place shown at any point. No third person appears, no audience faces are shown, and the stacked chairs remain empty. Both faces are clear and detailed and remain stable, the mother's face exactly matching <Picture 1> and the girl's face exactly matching <Picture 2>; neither face changes, ages, or swaps with the other. No object in this shot disappears from view, no object appears out of nowhere, and no object changes into another. All movements are gradual and continuous with no sudden movement, no abrupt pose changes and no teleporting. Refined watercolor concept-art animation style, delicate fine ink linework, loose transparent watercolor washes, granular cold-press paper texture, restrained indigo grey-green and warm cream palette, hand painted, quiet unhurried atmosphere, gentle seamless motion. Slow subtle camera push-in, very slight handheld sway.",
+      "width": 1280,
+      "height": 720,
+      "length": 192,
+      "ref_image_size": "max",
+      "vae": [
+        "5",
+        0
+      ],
+      "ref_videos": {
+        "ref_video_1": [
+          "6",
+          0
+        ]
+      },
+      "ref_images": {
+        "ref_image_1": [
+          "16",
+          0
+        ],
+        "ref_image_2": [
+          "17",
+          0
+        ],
+        "ref_image_3": [
+          "18",
+          0
+        ]
+      }
+    }
+  },
+  "8": {
+    "class_type": "BasicScheduler",
+    "inputs": {
+      "model": [
+        "3",
+        0
+      ],
+      "scheduler": "simple",
+      "steps": 20,
+      "denoise": 1.0
+    }
+  },
+  "9": {
+    "class_type": "RandomNoise",
+    "inputs": {
+      "noise_seed": 2026111432
+    }
+  },
+  "10": {
+    "class_type": "BasicGuider",
+    "inputs": {
+      "model": [
+        "3",
+        0
+      ],
+      "conditioning": [
+        "7",
+        0
+      ]
+    }
+  },
+  "11": {
+    "class_type": "KSamplerSelect",
+    "inputs": {
+      "sampler_name": "euler"
+    }
+  },
+  "12": {
+    "class_type": "SamplerCustomAdvanced",
+    "inputs": {
+      "noise": [
+        "9",
+        0
+      ],
+      "guider": [
+        "10",
+        0
+      ],
+      "sampler": [
+        "11",
+        0
+      ],
+      "sigmas": [
+        "8",
+        0
+      ],
+      "latent_image": [
+        "7",
+        1
+      ]
+    }
+  },
+  "13": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "12",
+        0
+      ],
+      "vae": [
+        "5",
+        0
+      ]
+    }
+  },
+  "14": {
+    "class_type": "CreateVideo",
+    "inputs": {
+      "images": [
+        "13",
+        0
+      ],
+      "fps": 24
+    }
+  },
+  "15": {
+    "class_type": "SaveVideo",
+    "inputs": {
+      "video": [
+        "14",
+        0
+      ],
+      "filename_prefix": "h3_r2v_shot27",
+      "format": "auto"
+    }
+  }
+}

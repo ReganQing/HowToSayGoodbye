@@ -1,0 +1,192 @@
+{
+  "1": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "minimax_h3_ref2va_pruned_nvfp4.safetensors",
+      "weight_dtype": "default"
+    }
+  },
+  "3": {
+    "class_type": "MiniMaxH3SigmaShift",
+    "inputs": {
+      "model": [
+        "1",
+        0
+      ],
+      "shift_video": 12,
+      "shift_audio": 3
+    }
+  },
+  "4": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "type": "minimax",
+      "device": "cpu"
+    }
+  },
+  "5": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "minimax_h3_video_vae_fp16.safetensors"
+    }
+  },
+  "6": {
+    "class_type": "LoadVideo",
+    "inputs": {
+      "file": "previs_shot23.mp4"
+    }
+  },
+  "16": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "SHOT23_C06b_face.png"
+    }
+  },
+  "17": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "SHOT23_C18_face.png"
+    }
+  },
+  "18": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "SHOT23_E08_desk.png"
+    }
+  },
+  "7": {
+    "class_type": "MiniMaxH3ReferenceToVideo",
+    "inputs": {
+      "clip": [
+        "4",
+        0
+      ],
+      "prompt": "<Video 1> <Picture 1> <Picture 2> <Picture 3> In a small north-facing Chinese bedroom with cool blue-grey walls, a single bed on the left with a folded quilt, a stack of old books on the floor beside it, a window with a gauzy white curtain, a wooden desk with a drawer beneath it, a small warm desk lamp, a white mug and a kettle, and one plain wooden chair, all arranged as in the reference <Picture 3>. Two people only. A Chinese woman in her late fifties with the same face exactly matching the reference portrait <Picture 1>, short dark hair with silver streaks, wearing a plain dove-grey knit cardigan, sitting on the wooden chair at the desk. An elderly Chinese man with the same face exactly matching the reference portrait <Picture 2>, wavy silver-grey hair, round black-framed glasses, wearing a beige V-neck sweater over a pale blue collared shirt. At the very start of the shot, spread out on the desktop in front of her, there is an old school exercise book, a photocopy of a university admission letter, and one sheet of warm cream paper with a handwritten address that has been changed twice, the old address not crossed out and the new address written beside it, the last line shakier and slightly crooked. That address sheet is large, bright and clearly readable in the very first frames. Beside these papers an open keepsake box sits on the desktop with a faded old red hair ribbon already lying inside it, clearly visible. In the first second of the shot, in one continuous slow gentle sequence, she smooths the address sheet flat with her fingertips, folds it in half, then unfolds it again, then lifts the whole sheet up off the desktop with both hands, carries it sideways above the open box, lowers it into the box and lays it down beside the faded red hair ribbon, and then slowly closes the lid of the box. The sheet of paper is continuously visible moving from the desktop into her hands, across the air above the box, and down into the box, with no jump and no cut. That address sheet is the only object in the whole shot that is allowed to disappear from view, and only because it has been placed inside the box and the lid has been closed over it; it must never vanish earlier, never float away, never be teleported and never change into another object. The old exercise book, the admission letter photocopy, the keepsake box, the faded red hair ribbon, the desk lamp, the mug and every other object stay where they are and never disappear or move abruptly. After the lid is closed she stays sitting quietly at the desk. The pale late afternoon light from the window fades slowly, gradually and continuously into blue-grey evening dusk, the small warm desk lamp becoming the only warm light in the room, with no sudden brightness change, no hard-edged light patch and no step. Near the end of the shot the elderly man comes quietly in from the doorway carrying a bowl of rice, sets it on the desk beside the closed box, does not urge her, and she takes the bowl and slowly eats a few mouthfuls. Throughout the shot there is no flashback, no memory image, no hard cut, no cross-space transition and no other time or place shown at any point. She remains seated on the chair with her feet on the ground, all movements are gradual and continuous with no sudden movement, no abrupt pose changes, no teleporting and no hard cuts, and no third person appears. Both faces are clear and detailed and remain stable, the woman's face exactly matching <Picture 1> and the elderly man's face exactly matching <Picture 2>; neither face changes, ages, or swaps with the other. Cool blue-grey north room light grading gently into evening dusk, warm cream paper and pale wood tones, a single small warm desk lamp, no harsh spotlight, no lens flare. Refined watercolor concept-art animation style, delicate fine ink linework, loose transparent watercolor washes, granular cold-press paper texture, restrained indigo grey-green and warm cream palette, hand painted, quiet unhurried atmosphere, gentle seamless motion. Slow subtle camera push-in, very slight handheld sway.",
+      "width": 1280,
+      "height": 720,
+      "length": 192,
+      "ref_image_size": "max",
+      "vae": [
+        "5",
+        0
+      ],
+      "ref_videos": {
+        "ref_video_1": [
+          "6",
+          0
+        ]
+      },
+      "ref_images": {
+        "ref_image_1": [
+          "16",
+          0
+        ],
+        "ref_image_2": [
+          "17",
+          0
+        ],
+        "ref_image_3": [
+          "18",
+          0
+        ]
+      }
+    }
+  },
+  "8": {
+    "class_type": "BasicScheduler",
+    "inputs": {
+      "model": [
+        "3",
+        0
+      ],
+      "scheduler": "simple",
+      "steps": 20,
+      "denoise": 1.0
+    }
+  },
+  "9": {
+    "class_type": "RandomNoise",
+    "inputs": {
+      "noise_seed": 2026111428
+    }
+  },
+  "10": {
+    "class_type": "BasicGuider",
+    "inputs": {
+      "model": [
+        "3",
+        0
+      ],
+      "conditioning": [
+        "7",
+        0
+      ]
+    }
+  },
+  "11": {
+    "class_type": "KSamplerSelect",
+    "inputs": {
+      "sampler_name": "euler"
+    }
+  },
+  "12": {
+    "class_type": "SamplerCustomAdvanced",
+    "inputs": {
+      "noise": [
+        "9",
+        0
+      ],
+      "guider": [
+        "10",
+        0
+      ],
+      "sampler": [
+        "11",
+        0
+      ],
+      "sigmas": [
+        "8",
+        0
+      ],
+      "latent_image": [
+        "7",
+        1
+      ]
+    }
+  },
+  "13": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "12",
+        0
+      ],
+      "vae": [
+        "5",
+        0
+      ]
+    }
+  },
+  "14": {
+    "class_type": "CreateVideo",
+    "inputs": {
+      "images": [
+        "13",
+        0
+      ],
+      "fps": 24
+    }
+  },
+  "15": {
+    "class_type": "SaveVideo",
+    "inputs": {
+      "video": [
+        "14",
+        0
+      ],
+      "filename_prefix": "h3_r2v_shot23",
+      "format": "auto"
+    }
+  }
+}

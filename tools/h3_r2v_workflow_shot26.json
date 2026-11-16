@@ -1,0 +1,202 @@
+{
+  "1": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "minimax_h3_ref2va_pruned_nvfp4.safetensors",
+      "weight_dtype": "default"
+    }
+  },
+  "3": {
+    "class_type": "MiniMaxH3SigmaShift",
+    "inputs": {
+      "model": [
+        "1",
+        0
+      ],
+      "shift_video": 12,
+      "shift_audio": 3
+    }
+  },
+  "4": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "type": "minimax",
+      "device": "cpu"
+    }
+  },
+  "5": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "minimax_h3_video_vae_fp16.safetensors"
+    }
+  },
+  "6": {
+    "class_type": "LoadVideo",
+    "inputs": {
+      "file": "previs_shot26.mp4"
+    }
+  },
+  "16": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "SHOT26_C07_face.png"
+    }
+  },
+  "17": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "SHOT26_C16_face.png"
+    }
+  },
+  "18": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "SHOT26_C17_face.png"
+    }
+  },
+  "7": {
+    "class_type": "MiniMaxH3ReferenceToVideo",
+    "inputs": {
+      "clip": [
+        "4",
+        0
+      ],
+      "prompt": "<Video 1> <Picture 1> <Picture 2> <Picture 3> <Picture 4> In the same quiet Chinese hospital ward as before, with pale green lower walls and cool white upper walls, three tall windows with a radiator beneath them and pale curtains, a metal hospital bed with white bedding and a blue blanket, a wooden bedside cabinet, an IV stand, a tall wooden wardrobe and a round wall clock, all arranged as in the reference <Picture 4>. Three people only. An elderly Chinese woman with the same face exactly matching the reference portrait <Picture 1>, short silver-white hair, wearing a pale blue hospital gown, lying propped up on pillows in the bed. An adult Chinese woman with the same face exactly matching the reference portrait <Picture 2>, shoulder-length dark hair, wearing a plain cream knit cardigan, standing beside the bed. A little Chinese girl with the same face exactly matching the reference portrait <Picture 3>, two dark braids, wearing a white shirt with red suspenders, beside the bed. At the very start of the shot the little girl stands close to the bed holding her grandmother's hand with tears on her cheeks, one plain wooden chair stands beside the bed, and on the bedside cabinet there is a small keepsake box with two faded red hair ribbons with tiny white flowers lying inside, both clearly visible. In the first second of the shot, in one continuous slow gentle sequence, the adult mother moves that wooden chair away from the bedside to one side with both hands to clear a small space, the chair staying visible the whole time and never disappearing, and then the little girl begins to dance in that small space, quietly counting the beats to herself, raising her arms and turning around; at the turn she forgets the step and stops, her face still wet; the grandmother smiles gently and signals her to start again, and the girl begins again from the first step and completes the little dance while the grandmother watches it all the way to the end. The dance is one continuous unbroken movement with no jump, no cut and no sudden pose change. Then the child leans back over the bedside and the old woman gently touches the end of one of her braids with her fingertips; the two faded red hair ribbons with tiny white flowers stay inside the keepsake box the whole time, never disappearing, never being taken away, never being worn by anyone and never changing into a plain new ribbon. The adult mother tucks the blanket corner neatly, the curtain at the window lifts and settles slowly and continuously in a soft breeze, and the old woman closes her eyes and gradually falls asleep while the little girl still holds her hand. The pale white ward light stays soft and even throughout, with no sudden brightness change, no hard-edged light patch and no step. Throughout the shot there is no flashback, no memory image, no corridor, no cart, no younger version of any character, no superimposed image, no hard cut, no cross-space transition and no other time or place shown at any point. The hospital bed, the bedside cabinet, the wooden chair, the keepsake box, the two ribbons, the IV stand, the three windows, the radiator, the curtains, the wooden wardrobe and the wall clock stay where they are and never disappear or move abruptly. All three faces are clear and detailed and remain stable, exactly matching <Picture 1>, <Picture 2> and <Picture 3>; none of them changes, ages, or swaps with another. All movements are gradual and continuous with no sudden movement, no abrupt pose changes, no teleporting and no hard cuts, and no fourth person appears. Soft even white hospital light, cool green-white walls and warm cream wood tones, no harsh spotlight, no lens flare, no hard-edged light patch. Refined watercolor concept-art animation style, delicate fine ink linework, loose transparent watercolor washes, granular cold-press paper texture, restrained indigo grey-green and warm cream palette, hand painted, quiet unhurried atmosphere, gentle seamless motion. Slow subtle camera push-in, very slight handheld sway.",
+      "width": 1280,
+      "height": 720,
+      "length": 192,
+      "ref_image_size": "max",
+      "vae": [
+        "5",
+        0
+      ],
+      "ref_videos": {
+        "ref_video_1": [
+          "6",
+          0
+        ]
+      },
+      "ref_images": {
+        "ref_image_1": [
+          "16",
+          0
+        ],
+        "ref_image_2": [
+          "17",
+          0
+        ],
+        "ref_image_3": [
+          "18",
+          0
+        ],
+        "ref_image_4": [
+          "19",
+          0
+        ]
+      }
+    }
+  },
+  "8": {
+    "class_type": "BasicScheduler",
+    "inputs": {
+      "model": [
+        "3",
+        0
+      ],
+      "scheduler": "simple",
+      "steps": 20,
+      "denoise": 1.0
+    }
+  },
+  "9": {
+    "class_type": "RandomNoise",
+    "inputs": {
+      "noise_seed": 2026111431
+    }
+  },
+  "10": {
+    "class_type": "BasicGuider",
+    "inputs": {
+      "model": [
+        "3",
+        0
+      ],
+      "conditioning": [
+        "7",
+        0
+      ]
+    }
+  },
+  "11": {
+    "class_type": "KSamplerSelect",
+    "inputs": {
+      "sampler_name": "euler"
+    }
+  },
+  "12": {
+    "class_type": "SamplerCustomAdvanced",
+    "inputs": {
+      "noise": [
+        "9",
+        0
+      ],
+      "guider": [
+        "10",
+        0
+      ],
+      "sampler": [
+        "11",
+        0
+      ],
+      "sigmas": [
+        "8",
+        0
+      ],
+      "latent_image": [
+        "7",
+        1
+      ]
+    }
+  },
+  "13": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "12",
+        0
+      ],
+      "vae": [
+        "5",
+        0
+      ]
+    }
+  },
+  "14": {
+    "class_type": "CreateVideo",
+    "inputs": {
+      "images": [
+        "13",
+        0
+      ],
+      "fps": 24
+    }
+  },
+  "15": {
+    "class_type": "SaveVideo",
+    "inputs": {
+      "video": [
+        "14",
+        0
+      ],
+      "filename_prefix": "h3_r2v_shot26",
+      "format": "auto"
+    }
+  },
+  "19": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "SHOT26_E02_ward.png"
+    }
+  }
+}

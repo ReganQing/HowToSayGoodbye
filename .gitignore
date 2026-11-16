@@ -1,0 +1,50 @@
+# ---- Credentials & local config (never commit) ----
+.env
+.env.*
+*.key
+*.pem
+*.p12
+*.pfx
+*_token*
+*credentials*
+*secret*
+.git-credentials
+.token
+tokens.json
+
+# ---- Python caches ----
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.venv/
+venv/
+
+# ---- Large media / generated assets (kept locally only) ----
+assets/
+progress/
+output/
+tmp_qc/
+tmp_crop/
+report/figures/
+*.mp4
+*.mov
+*.mkv
+*.glb
+*.gltf
+*.blend
+*.blend1
+*.zip
+*.7z
+*.tar.gz
+*.psd
+*.exr
+
+# ---- OS / editor ----
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.swp

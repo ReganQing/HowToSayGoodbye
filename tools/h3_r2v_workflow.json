@@ -1,0 +1,118 @@
+{
+  "1": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "minimax_h3_ref2va_pruned_nvfp4.safetensors",
+      "weight_dtype": "default"
+    }
+  },
+  "2": {
+    "class_type": "LoraLoaderModelOnly",
+    "inputs": {
+      "model": ["1", 0],
+      "lora_name": "minimax_h3_ref2v_turbo_4step_v0.1_comfyui_bf16.safetensors",
+      "strength_model": 1.0
+    }
+  },
+  "3": {
+    "class_type": "MiniMaxH3SigmaShift",
+    "inputs": {
+      "model": ["2", 0],
+      "shift_video": 12,
+      "shift_audio": 3
+    }
+  },
+  "4": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "type": "minimax",
+      "device": "cpu"
+    }
+  },
+  "5": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "minimax_h3_video_vae_fp16.safetensors"
+    }
+  },
+  "6": {
+    "class_type": "LoadVideo",
+    "inputs": {
+      "file": "previs_shot01.mp4"
+    }
+  },
+  "7": {
+    "class_type": "MiniMaxH3ReferenceToVideo",
+    "inputs": {
+      "clip": ["4", 0],
+      "prompt": "<Video 1> A slow cinematic push-in into the stairwell entrance of an old 1990s Chinese factory dormitory. An elderly grandmother in a clean indigo blue apron stands at the top of the concrete stairs, raising one hand holding a long red silk hair ribbon; a young mother with two neat braids stands beside her; a small girl stands on the stairs; a young man stands at the foot of the stairs next to a vintage black bicycle. Hand-painted watercolor illustration, children's picture-book art style, clean confident ink outlines, soft translucent watercolor washes, mostly flat clean color blocks, gentle muted warm nostalgic palette, soft diffused late-afternoon daylight, subtle gentle ambient motion.",
+      "width": 1280,
+      "height": 720,
+      "length": 192,
+      "ref_image_size": "match",
+      "vae": ["5", 0],
+      "ref_videos": [["6", 0]]
+    }
+  },
+  "8": {
+    "class_type": "BasicScheduler",
+    "inputs": {
+      "model": ["3", 0],
+      "scheduler": "simple",
+      "steps": 4,
+      "denoise": 1.0
+    }
+  },
+  "9": {
+    "class_type": "RandomNoise",
+    "inputs": {
+      "noise_seed": 2026110111
+    }
+  },
+  "10": {
+    "class_type": "BasicGuider",
+    "inputs": {
+      "model": ["3", 0],
+      "conditioning": ["7", 0]
+    }
+  },
+  "11": {
+    "class_type": "KSamplerSelect",
+    "inputs": {
+      "sampler_name": "euler"
+    }
+  },
+  "12": {
+    "class_type": "SamplerCustomAdvanced",
+    "inputs": {
+      "noise": ["9", 0],
+      "guider": ["10", 0],
+      "sampler": ["11", 0],
+      "sigmas": ["8", 0],
+      "latent_image": ["7", 1]
+    }
+  },
+  "13": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": ["12", 0],
+      "vae": ["5", 0]
+    }
+  },
+  "14": {
+    "class_type": "CreateVideo",
+    "inputs": {
+      "images": ["13", 0],
+      "fps": 24
+    }
+  },
+  "15": {
+    "class_type": "SaveVideo",
+    "inputs": {
+      "video": ["14", 0],
+      "filename_prefix": "h3_r2v_shot01",
+      "format": "auto"
+    }
+  }
+}

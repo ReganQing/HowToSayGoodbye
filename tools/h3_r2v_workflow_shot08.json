@@ -1,0 +1,182 @@
+{
+ "1": {
+  "class_type": "UNETLoader",
+  "inputs": {
+   "unet_name": "minimax_h3_ref2va_pruned_nvfp4.safetensors",
+   "weight_dtype": "default"
+  }
+ },
+ "3": {
+  "class_type": "MiniMaxH3SigmaShift",
+  "inputs": {
+   "model": [
+    "1",
+    0
+   ],
+   "shift_video": 12,
+   "shift_audio": 3
+  }
+ },
+ "4": {
+  "class_type": "CLIPLoader",
+  "inputs": {
+   "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+   "type": "minimax",
+   "device": "cpu"
+  }
+ },
+ "5": {
+  "class_type": "VAELoader",
+  "inputs": {
+   "vae_name": "minimax_h3_video_vae_fp16.safetensors"
+  }
+ },
+ "6": {
+  "class_type": "LoadVideo",
+  "inputs": {
+   "file": "previs_shot08.mp4"
+  }
+ },
+ "16": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "SHOT07_C14_face.png"
+  }
+ },
+ "17": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "SHOT06_C05_face.png"
+  }
+ },
+ "7": {
+  "class_type": "MiniMaxH3ReferenceToVideo",
+  "inputs": {
+   "clip": [
+    "4",
+    0
+   ],
+   "prompt": "<Video 1> <Picture 1> <Picture 2> A warm summer afternoon on a small street in a southern Chinese city in the early 2000s, small storefronts and tall leafy trees along the sidewalk, a fast-food eatery with a red signboard in the background. An older Chinese man in his late fifties with short graying crew-cut hair, wearing a light gray short-sleeve polo shirt, dark loose trousers and black cloth slippers, stands on the sidewalk beside a young Chinese woman of about twenty with shoulder-length black hair, a beige knit cardigan over a white shirt and blue jeans. At the start of the shot both of them stand relaxed facing the camera, the man's arms resting at his sides. Over the course of the shot, in one continuous slow sequence: the man reaches his right hand into his trouser pocket and takes out a small dark smartphone; he brings the phone up in front of his chest and turns its screen toward the young woman; the young woman takes half a step closer to him and leans in, and both of them lower their heads slightly to look at the phone screen together, the screen facing away from the camera with only a faint soft glow; they keep looking at the phone quietly and still as the shot ends. Throughout the shot both remain standing in the same spot on the sidewalk, they do not walk away, no sudden movement, every gesture slow and natural. Both characters have clear detailed faces exactly matching the reference portraits <Picture 1> (the older man) and <Picture 2> (the young woman). Electric scooters parked by the curb, dappled warm sunlight through the leaves, muted warm palette. Refined watercolor concept-art animation style, delicate fine ink linework, loose transparent watercolor washes, granular cold-press paper texture, restrained indigo grey-green and warm cream palette, soft warm humid summer afternoon light, gentle nostalgic unhurried atmosphere, slow continuous camera push-in, gentle seamless motion.",
+   "width": 1280,
+   "height": 720,
+   "length": 192,
+   "ref_image_size": "max",
+   "vae": [
+    "5",
+    0
+   ],
+   "ref_videos": {
+    "ref_video_1": [
+     "6",
+     0
+    ]
+   },
+   "ref_images": {
+    "ref_image_1": [
+     "16",
+     0
+    ],
+    "ref_image_2": [
+     "17",
+     0
+    ]
+   }
+  }
+ },
+ "8": {
+  "class_type": "BasicScheduler",
+  "inputs": {
+   "model": [
+    "3",
+    0
+   ],
+   "scheduler": "simple",
+   "steps": 20,
+   "denoise": 1.0
+  }
+ },
+ "9": {
+  "class_type": "RandomNoise",
+  "inputs": {
+   "noise_seed": 2026110802
+  }
+ },
+ "10": {
+  "class_type": "BasicGuider",
+  "inputs": {
+   "model": [
+    "3",
+    0
+   ],
+   "conditioning": [
+    "7",
+    0
+   ]
+  }
+ },
+ "11": {
+  "class_type": "KSamplerSelect",
+  "inputs": {
+   "sampler_name": "euler"
+  }
+ },
+ "12": {
+  "class_type": "SamplerCustomAdvanced",
+  "inputs": {
+   "noise": [
+    "9",
+    0
+   ],
+   "guider": [
+    "10",
+    0
+   ],
+   "sampler": [
+    "11",
+    0
+   ],
+   "sigmas": [
+    "8",
+    0
+   ],
+   "latent_image": [
+    "7",
+    1
+   ]
+  }
+ },
+ "13": {
+  "class_type": "VAEDecode",
+  "inputs": {
+   "samples": [
+    "12",
+    0
+   ],
+   "vae": [
+    "5",
+    0
+   ]
+  }
+ },
+ "14": {
+  "class_type": "CreateVideo",
+  "inputs": {
+   "images": [
+    "13",
+    0
+   ],
+   "fps": 24
+  }
+ },
+ "15": {
+  "class_type": "SaveVideo",
+  "inputs": {
+   "video": [
+    "14",
+    0
+   ],
+   "filename_prefix": "h3_r2v_shot08",
+   "format": "auto"
+  }
+ }
+}

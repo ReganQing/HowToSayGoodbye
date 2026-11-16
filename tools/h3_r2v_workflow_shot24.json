@@ -1,0 +1,182 @@
+{
+  "1": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "minimax_h3_ref2va_pruned_nvfp4.safetensors",
+      "weight_dtype": "default"
+    }
+  },
+  "3": {
+    "class_type": "MiniMaxH3SigmaShift",
+    "inputs": {
+      "model": [
+        "1",
+        0
+      ],
+      "shift_video": 12,
+      "shift_audio": 3
+    }
+  },
+  "4": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "type": "minimax",
+      "device": "cpu"
+    }
+  },
+  "5": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "minimax_h3_video_vae_fp16.safetensors"
+    }
+  },
+  "6": {
+    "class_type": "LoadVideo",
+    "inputs": {
+      "file": "previs_shot24.mp4"
+    }
+  },
+  "16": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "SHOT24_C07b_face.png"
+    }
+  },
+  "17": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "SHOT24_E09_table.png"
+    }
+  },
+  "7": {
+    "class_type": "MiniMaxH3ReferenceToVideo",
+    "inputs": {
+      "clip": [
+        "4",
+        0
+      ],
+      "prompt": "<Video 1> <Picture 1> <Picture 2> In a small modest Chinese apartment room with cool blue-grey walls, a folding dining table with pale wood top and dark crossed legs, two plain wooden chairs one on the near side and one on the far side of the table, a north window with a gauzy white curtain, a low wooden cabinet against the right wall with a lidded cooking pot and a stack of small bowls and a white mug on it, and a tall thermos flask, all arranged as in the reference <Picture 2>. One person only. An elderly Chinese woman with the same face exactly matching the reference portrait <Picture 1>, wavy silver-white hair, wearing a cream knit cardigan over a white collared shirt, sitting alone on the near-side wooden chair at the folding table. The wooden chair on the far side of the table, directly opposite her, is empty and stays completely empty for the entire shot: no one ever sits on it, no second person appears anywhere, no human silhouette, no shadow of a person, no figure in the doorway and no reflection of a person; that empty chair never moves and is never occupied. At the very start of the shot there are two bowls of noodles on the table, one in front of her and one in front of the empty chair, both large, clearly readable and steaming with thin visible wisps of hot steam, with a pair of chopsticks beside each bowl; the two bowls are the most important objects in the frame. In the first second of the shot, in one continuous slow gentle sequence, the thin steam above both bowls begins to fade, growing weaker and thinner gradually and continuously until the noodles have gone completely cold and there is no steam at all, while both bowls stay exactly where they are, never moved, never eaten from, never refilled, never covered and never disappearing. She sits quietly without getting up, says one short quiet line and then stops and waits as if listening for a response that does not come, her hands resting near the table edge. The pale warm afternoon light from the window fades slowly, gradually and continuously into cool blue-grey early evening within this same room, with no sudden brightness change, no hard-edged light patch, no step and no change of place or time jump; the passage of time until the next day is suggested only by this continuous light change and by her quiet stillness, never by a cut or a flashback. Near the end of the shot a mobile phone is resting on the table beside her hand, clearly visible; she slowly reaches for it, picks it up with one hand in one continuous movement, lifts it gradually to her ear and holds it there, making a quiet phone call to her daughter, with a small sad and tender expression. The phone is continuously visible moving from the table into her hand and up to her ear with no jump and no cut; it never vanishes earlier, never floats away, never teleports and never changes into another object. Both bowls of noodles, both pairs of chopsticks, the empty chair opposite, the thermos, the low cabinet, the lidded pot, the stack of bowls, the white mug, the window and the curtain stay where they are for the whole shot and never disappear or move abruptly. Throughout the shot there is no flashback, no memory image, no hard cut, no cross-space transition, no second location and no other time or place shown at any point, and only one person is ever present. She remains seated on the near chair with both feet on the ground, all movements are gradual and continuous with no sudden movement, no abrupt pose changes and no teleporting, and no third person appears. Her face is clear and detailed and remains stable, exactly matching <Picture 1>; it does not change, age or swap with another face. Soft cool north window light grading gently into quiet blue-grey evening, warm cream wood tones, no harsh spotlight, no lens flare. Refined watercolor concept-art animation style, delicate fine ink linework, loose transparent watercolor washes, granular cold-press paper texture, restrained indigo grey-green and warm cream palette, hand painted, quiet unhurried atmosphere, gentle seamless motion. Slow subtle camera push-in, very slight handheld sway.",
+      "width": 1280,
+      "height": 720,
+      "length": 192,
+      "ref_image_size": "max",
+      "vae": [
+        "5",
+        0
+      ],
+      "ref_videos": {
+        "ref_video_1": [
+          "6",
+          0
+        ]
+      },
+      "ref_images": {
+        "ref_image_1": [
+          "16",
+          0
+        ],
+        "ref_image_2": [
+          "17",
+          0
+        ]
+      }
+    }
+  },
+  "8": {
+    "class_type": "BasicScheduler",
+    "inputs": {
+      "model": [
+        "3",
+        0
+      ],
+      "scheduler": "simple",
+      "steps": 20,
+      "denoise": 1.0
+    }
+  },
+  "9": {
+    "class_type": "RandomNoise",
+    "inputs": {
+      "noise_seed": 2026111429
+    }
+  },
+  "10": {
+    "class_type": "BasicGuider",
+    "inputs": {
+      "model": [
+        "3",
+        0
+      ],
+      "conditioning": [
+        "7",
+        0
+      ]
+    }
+  },
+  "11": {
+    "class_type": "KSamplerSelect",
+    "inputs": {
+      "sampler_name": "euler"
+    }
+  },
+  "12": {
+    "class_type": "SamplerCustomAdvanced",
+    "inputs": {
+      "noise": [
+        "9",
+        0
+      ],
+      "guider": [
+        "10",
+        0
+      ],
+      "sampler": [
+        "11",
+        0
+      ],
+      "sigmas": [
+        "8",
+        0
+      ],
+      "latent_image": [
+        "7",
+        1
+      ]
+    }
+  },
+  "13": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "12",
+        0
+      ],
+      "vae": [
+        "5",
+        0
+      ]
+    }
+  },
+  "14": {
+    "class_type": "CreateVideo",
+    "inputs": {
+      "images": [
+        "13",
+        0
+      ],
+      "fps": 24
+    }
+  },
+  "15": {
+    "class_type": "SaveVideo",
+    "inputs": {
+      "video": [
+        "14",
+        0
+      ],
+      "filename_prefix": "h3_r2v_shot24",
+      "format": "auto"
+    }
+  }
+}

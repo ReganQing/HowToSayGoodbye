@@ -1,0 +1,182 @@
+{
+  "1": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "minimax_h3_ref2va_pruned_nvfp4.safetensors",
+      "weight_dtype": "default"
+    }
+  },
+  "3": {
+    "class_type": "MiniMaxH3SigmaShift",
+    "inputs": {
+      "model": [
+        "1",
+        0
+      ],
+      "shift_video": 12,
+      "shift_audio": 3
+    }
+  },
+  "4": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "type": "minimax",
+      "device": "cpu"
+    }
+  },
+  "5": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "minimax_h3_video_vae_fp16.safetensors"
+    }
+  },
+  "6": {
+    "class_type": "LoadVideo",
+    "inputs": {
+      "file": "previs_shot04.mp4"
+    }
+  },
+  "16": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "SHOT04_C01_face.png"
+    }
+  },
+  "17": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "SHOT04_C09_face.png"
+    }
+  },
+  "7": {
+    "class_type": "MiniMaxH3ReferenceToVideo",
+    "inputs": {
+      "clip": [
+        "4",
+        0
+      ],
+      "prompt": "<Video 1> <Picture 1> <Picture 2> A tender early-morning scene in a modest 1990s Chinese working-class home bedroom, soft golden sunlight filtering through white lace curtains on a window. A young Chinese mother in her late twenties with two neat low braids, wearing a clean indigo-blue cotton jacket, stands leaning gently forward, combing and tying the hair of a small Chinese girl. The little girl, around six years old with a black bob haircut and neat bangs, sits on a small wooden stool in front of a wooden dresser with a large wall mirror, wearing a clean pale-yellow cotton jacket and grey-blue trousers, sitting quietly with her head tilted slightly up, hands resting on her lap. Both characters have clear detailed faces exactly matching the reference portraits <Picture 1> and <Picture 2>. The room has pale green painted walls, a neatly made bed with folded quilts, a wooden nightstand with an alarm clock, clean worn wooden floor. Refined watercolor concept-art animation style, delicate fine ink linework, loose transparent watercolor washes, granular cold-press paper texture, restrained indigo black denim-grey and cream palette, warm luminous morning sunlight, quiet intimate nostalgic atmosphere, subtle ambient motion, slow emotional pacing.",
+      "width": 1280,
+      "height": 720,
+      "length": 192,
+      "ref_image_size": "max",
+      "vae": [
+        "5",
+        0
+      ],
+      "ref_videos": {
+        "ref_video_1": [
+          "6",
+          0
+        ]
+      },
+      "ref_images": {
+        "ref_image_1": [
+          "16",
+          0
+        ],
+        "ref_image_2": [
+          "17",
+          0
+        ]
+      }
+    }
+  },
+  "8": {
+    "class_type": "BasicScheduler",
+    "inputs": {
+      "model": [
+        "3",
+        0
+      ],
+      "scheduler": "simple",
+      "steps": 20,
+      "denoise": 1.0
+    }
+  },
+  "9": {
+    "class_type": "RandomNoise",
+    "inputs": {
+      "noise_seed": 2026110705
+    }
+  },
+  "10": {
+    "class_type": "BasicGuider",
+    "inputs": {
+      "model": [
+        "3",
+        0
+      ],
+      "conditioning": [
+        "7",
+        0
+      ]
+    }
+  },
+  "11": {
+    "class_type": "KSamplerSelect",
+    "inputs": {
+      "sampler_name": "euler"
+    }
+  },
+  "12": {
+    "class_type": "SamplerCustomAdvanced",
+    "inputs": {
+      "noise": [
+        "9",
+        0
+      ],
+      "guider": [
+        "10",
+        0
+      ],
+      "sampler": [
+        "11",
+        0
+      ],
+      "sigmas": [
+        "8",
+        0
+      ],
+      "latent_image": [
+        "7",
+        1
+      ]
+    }
+  },
+  "13": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "12",
+        0
+      ],
+      "vae": [
+        "5",
+        0
+      ]
+    }
+  },
+  "14": {
+    "class_type": "CreateVideo",
+    "inputs": {
+      "images": [
+        "13",
+        0
+      ],
+      "fps": 24
+    }
+  },
+  "15": {
+    "class_type": "SaveVideo",
+    "inputs": {
+      "video": [
+        "14",
+        0
+      ],
+      "filename_prefix": "h3_r2v_shot04",
+      "format": "auto"
+    }
+  }
+}

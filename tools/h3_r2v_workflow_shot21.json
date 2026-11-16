@@ -1,0 +1,192 @@
+{
+  "1": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "minimax_h3_ref2va_pruned_nvfp4.safetensors",
+      "weight_dtype": "default"
+    }
+  },
+  "3": {
+    "class_type": "MiniMaxH3SigmaShift",
+    "inputs": {
+      "model": [
+        "1",
+        0
+      ],
+      "shift_video": 12,
+      "shift_audio": 3
+    }
+  },
+  "4": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "type": "minimax",
+      "device": "cpu"
+    }
+  },
+  "5": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "minimax_h3_video_vae_fp16.safetensors"
+    }
+  },
+  "6": {
+    "class_type": "LoadVideo",
+    "inputs": {
+      "file": "previs_shot21.mp4"
+    }
+  },
+  "16": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "SHOT21_C06b_face.png"
+    }
+  },
+  "17": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "SHOT21_C11_face.png"
+    }
+  },
+  "18": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "SHOT21_E10_doorway.png"
+    }
+  },
+  "7": {
+    "class_type": "MiniMaxH3ReferenceToVideo",
+    "inputs": {
+      "clip": [
+        "4",
+        0
+      ],
+      "prompt": "<Video 1> <Picture 1> <Picture 2> <Picture 3> At the open doorway of a modest Chinese apartment in soft early morning light, an open entrance door with a plain frame, a narrow console table just inside the door, and beyond it the same small kitchen with a sink and counter, a window with a pale curtain and shelves with bowls, the door and the table and the kitchen beyond arranged as in the reference <Picture 3>. Two people only. A Chinese woman in her late fifties with the same face exactly matching the reference portrait <Picture 1>, short dark hair with silver streaks, wearing a plain dove-grey knit cardigan. An elderly Chinese woman aged eighty with the same face exactly matching the reference portrait <Picture 2>, short silver-grey hair, thin wire-framed glasses, wearing a dark navy knit cardigan. At the start of the shot the younger woman is standing in the open doorway holding a clearly visible paper bag full of bright orange tangerines in one hand, having just come back upstairs, and the elderly woman is standing just inside the door facing her; the bag of tangerines is large, brightly coloured and clearly visible in the very first frames. Over the course of the shot, in one continuous slow gentle sequence: the younger woman holds the bag out and offers it, the elderly woman reaches out with both hands and takes the bag from her so that the bag passes visibly from one pair of hands into the other; the elderly woman then takes one tangerine out of the bag, peels it slowly with her fingers and breaks it in half, and holds one half out to the younger woman, who takes it and eats it quietly while standing in the doorway; then the elderly woman takes the remaining tangerines out of the bag one by one and sets them in a neat row on the narrow console table, choosing the softest one and placing it a little apart from the others. By the end of the shot the younger woman is turning to leave through the still open door, the elderly woman is standing behind her beside the console table with the tangerines laid out in a row and the emptied paper bag beside them, and the elderly woman quietly says that she should come back for dinner tonight; the younger woman gives a small quiet nod. Throughout the shot the paper bag and every tangerine never disappear, never float away and never change into other objects; the bag stays in someone's hands or rests on the console table, and every tangerine that is taken out of the bag is clearly seen moving from the bag to her hand and then to the table. There is no flashback, no memory image, no hard cut, no cross-space transition and no other time or place shown at any point. Both of their feet stay on the ground, the door stays open in the same position, all movements are gradual and continuous with no sudden movement, no abrupt pose changes, no teleporting and no hard cuts, no third person appears. Both faces are clear and detailed and remain stable, the younger woman's face exactly matching <Picture 1> and the elderly woman's face exactly matching <Picture 2>; neither face changes, ages, or swaps with the other. Soft even early morning light from the window, cool blue-grey shade and a pale warm patch of light near the doorway, no harsh spotlight, no lens flare. Refined watercolor concept-art animation style, delicate fine ink linework, loose transparent watercolor washes, granular cold-press paper texture, restrained indigo grey-green and warm cream palette, hand painted, quiet unhurried atmosphere, gentle seamless motion. Slow subtle camera push-in, very slight handheld sway.",
+      "width": 1280,
+      "height": 720,
+      "length": 192,
+      "ref_image_size": "max",
+      "vae": [
+        "5",
+        0
+      ],
+      "ref_videos": {
+        "ref_video_1": [
+          "6",
+          0
+        ]
+      },
+      "ref_images": {
+        "ref_image_1": [
+          "16",
+          0
+        ],
+        "ref_image_2": [
+          "17",
+          0
+        ],
+        "ref_image_3": [
+          "18",
+          0
+        ]
+      }
+    }
+  },
+  "8": {
+    "class_type": "BasicScheduler",
+    "inputs": {
+      "model": [
+        "3",
+        0
+      ],
+      "scheduler": "simple",
+      "steps": 20,
+      "denoise": 1.0
+    }
+  },
+  "9": {
+    "class_type": "RandomNoise",
+    "inputs": {
+      "noise_seed": 2026111426
+    }
+  },
+  "10": {
+    "class_type": "BasicGuider",
+    "inputs": {
+      "model": [
+        "3",
+        0
+      ],
+      "conditioning": [
+        "7",
+        0
+      ]
+    }
+  },
+  "11": {
+    "class_type": "KSamplerSelect",
+    "inputs": {
+      "sampler_name": "euler"
+    }
+  },
+  "12": {
+    "class_type": "SamplerCustomAdvanced",
+    "inputs": {
+      "noise": [
+        "9",
+        0
+      ],
+      "guider": [
+        "10",
+        0
+      ],
+      "sampler": [
+        "11",
+        0
+      ],
+      "sigmas": [
+        "8",
+        0
+      ],
+      "latent_image": [
+        "7",
+        1
+      ]
+    }
+  },
+  "13": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "12",
+        0
+      ],
+      "vae": [
+        "5",
+        0
+      ]
+    }
+  },
+  "14": {
+    "class_type": "CreateVideo",
+    "inputs": {
+      "images": [
+        "13",
+        0
+      ],
+      "fps": 24
+    }
+  },
+  "15": {
+    "class_type": "SaveVideo",
+    "inputs": {
+      "video": [
+        "14",
+        0
+      ],
+      "filename_prefix": "h3_r2v_shot21",
+      "format": "auto"
+    }
+  }
+}

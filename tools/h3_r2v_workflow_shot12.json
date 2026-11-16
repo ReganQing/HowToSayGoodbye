@@ -1,0 +1,182 @@
+{
+ "1": {
+  "class_type": "UNETLoader",
+  "inputs": {
+   "unet_name": "minimax_h3_ref2va_pruned_nvfp4.safetensors",
+   "weight_dtype": "default"
+  }
+ },
+ "3": {
+  "class_type": "MiniMaxH3SigmaShift",
+  "inputs": {
+   "model": [
+    "1",
+    0
+   ],
+   "shift_video": 12,
+   "shift_audio": 3
+  }
+ },
+ "4": {
+  "class_type": "CLIPLoader",
+  "inputs": {
+   "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+   "type": "minimax",
+   "device": "cpu"
+  }
+ },
+ "5": {
+  "class_type": "VAELoader",
+  "inputs": {
+   "vae_name": "minimax_h3_video_vae_fp16.safetensors"
+  }
+ },
+ "6": {
+  "class_type": "LoadVideo",
+  "inputs": {
+   "file": "previs_shot12.mp4"
+  }
+ },
+ "16": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "SHOT06_C05_face.png"
+  }
+ },
+ "17": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "SHOT12_E08_room.png"
+  }
+ },
+ "7": {
+  "class_type": "MiniMaxH3ReferenceToVideo",
+  "inputs": {
+   "clip": [
+    "4",
+    0
+   ],
+   "prompt": "<Video 1> <Picture 1> <Picture 2> Interior of a small modest rented room in a northern Chinese city in the 2010s, daytime with pale cool north light falling through a single window with a thin white curtain, a wooden desk under the window with an enamel mug and a small electric kettle on it, a single bed with a folded quilt along the left wall, a stack of books raised on a low wooden board over bricks on the floor beside the desk, a faint damp patch on the lower corner of the wall, matching the reference <Picture 2>. A young Chinese woman in her mid-twenties with the same face exactly matching the reference portrait <Picture 1>, black hair tied back loosely, wearing a pale grey button-up shirt over a white tee and dark trousers, small silver stud earrings. At the start of the shot she stands beside the book stack on the floor, the stack of books resting on the low board in front of her feet. Over the course of the shot, in one continuous slow gentle sequence: she bends forward at the waist and picks up the whole stack of books with both hands from the board on the floor; she straightens up holding the stack against her chest; she walks two slow steps toward the desk under the window with the books held in both arms; she bends slightly and places the stack of books down on the desk top by the window; then she picks up the topmost book from the stack, holds it with both hands against her chest, and stands still facing the window, her back three-quarter to the camera, gazing out at the pale daylight, the book held close. By the end of the shot she remains standing at the desk by the window, back three-quarter to the camera, the single book held against her chest with both hands, her head lifted slightly toward the window light, quiet and still. Throughout the shot the room, the window and the furniture stay in the same positions, the books never float or disappear, her feet stay on the floor, no sudden movement, no turning around to face the camera, no sitting down. The young woman has a clear detailed face exactly matching the reference portrait <Picture 1>. Pale cool daylight from the window with soft shadows, a faint warm bounce from the desk. Refined watercolor concept-art animation style, delicate fine ink linework, loose transparent watercolor washes, granular cold-press paper texture, restrained indigo grey-green and warm cream palette, hand painted, quiet unhurried atmosphere, gentle seamless motion. Slow subtle camera push-in from the front-left of the room, very slight handheld sway.",
+   "width": 1280,
+   "height": 720,
+   "length": 192,
+   "ref_image_size": "max",
+   "vae": [
+    "5",
+    0
+   ],
+   "ref_videos": {
+    "ref_video_1": [
+     "6",
+     0
+    ]
+   },
+   "ref_images": {
+    "ref_image_1": [
+     "16",
+     0
+    ],
+    "ref_image_2": [
+     "17",
+     0
+    ]
+   }
+  }
+ },
+ "8": {
+  "class_type": "BasicScheduler",
+  "inputs": {
+   "model": [
+    "3",
+    0
+   ],
+   "scheduler": "simple",
+   "steps": 20,
+   "denoise": 1.0
+  }
+ },
+ "9": {
+  "class_type": "RandomNoise",
+  "inputs": {
+   "noise_seed": 2026111103
+  }
+ },
+ "10": {
+  "class_type": "BasicGuider",
+  "inputs": {
+   "model": [
+    "3",
+    0
+   ],
+   "conditioning": [
+    "7",
+    0
+   ]
+  }
+ },
+ "11": {
+  "class_type": "KSamplerSelect",
+  "inputs": {
+   "sampler_name": "euler"
+  }
+ },
+ "12": {
+  "class_type": "SamplerCustomAdvanced",
+  "inputs": {
+   "noise": [
+    "9",
+    0
+   ],
+   "guider": [
+    "10",
+    0
+   ],
+   "sampler": [
+    "11",
+    0
+   ],
+   "sigmas": [
+    "8",
+    0
+   ],
+   "latent_image": [
+    "7",
+    1
+   ]
+  }
+ },
+ "13": {
+  "class_type": "VAEDecode",
+  "inputs": {
+   "samples": [
+    "12",
+    0
+   ],
+   "vae": [
+    "5",
+    0
+   ]
+  }
+ },
+ "14": {
+  "class_type": "CreateVideo",
+  "inputs": {
+   "images": [
+    "13",
+    0
+   ],
+   "fps": 24
+  }
+ },
+ "15": {
+  "class_type": "SaveVideo",
+  "inputs": {
+   "video": [
+    "14",
+    0
+   ],
+   "filename_prefix": "h3_r2v_shot12",
+   "format": "auto"
+  }
+ }
+}

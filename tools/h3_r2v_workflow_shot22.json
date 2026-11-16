@@ -1,0 +1,192 @@
+{
+  "1": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "minimax_h3_ref2va_pruned_nvfp4.safetensors",
+      "weight_dtype": "default"
+    }
+  },
+  "3": {
+    "class_type": "MiniMaxH3SigmaShift",
+    "inputs": {
+      "model": [
+        "1",
+        0
+      ],
+      "shift_video": 12,
+      "shift_audio": 3
+    }
+  },
+  "4": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "type": "minimax",
+      "device": "cpu"
+    }
+  },
+  "5": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "minimax_h3_video_vae_fp16.safetensors"
+    }
+  },
+  "6": {
+    "class_type": "LoadVideo",
+    "inputs": {
+      "file": "previs_shot22.mp4"
+    }
+  },
+  "16": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "SHOT22_C06b_face.png"
+    }
+  },
+  "17": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "SHOT22_C11_face.png"
+    }
+  },
+  "18": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "SHOT22_E11_balcony.png"
+    }
+  },
+  "7": {
+    "class_type": "MiniMaxH3ReferenceToVideo",
+    "inputs": {
+      "clip": [
+        "4",
+        0
+      ],
+      "prompt": "<Video 1> <Picture 1> <Picture 2> <Picture 3> On a narrow Chinese apartment balcony in warm gentle spring afternoon sunlight, with a metal security grille and a glimpse of neighbouring rooftops and green trees on the left, a bamboo pole spanning overhead, a windowsill on the right with a potted plant, a folded cloth and a white enamel basin, two small wooden stools side by side, and a woven basket of fresh green long beans, all arranged as in the reference <Picture 3>. Two people only, sitting side by side on the two small wooden stools. A Chinese woman in her late fifties with the same face exactly matching the reference portrait <Picture 1>, short dark hair with silver streaks, wearing a plain dove-grey knit cardigan. An elderly Chinese woman aged eighty with the same face exactly matching the reference portrait <Picture 2>, short silver-grey hair, thin wire-framed glasses, wearing a dark navy knit cardigan. At the very start of the shot the elderly woman is already holding one single unbroken green long bean clearly visible in her hand, large and brightly coloured and clearly readable in the first frames, and the younger woman is holding another green long bean above the basket. In one continuous slow gentle sequence: during the first second the elderly woman's head slowly droops forward and her eyes close as she falls asleep, while her hand and the single green long bean in it stay perfectly still; the younger woman notices her, does not take the bean from her hand, and keeps her own hands away from the elderly woman's hand for the whole shot; then the younger woman quietly and slowly continues snapping the ends off the remaining long beans one by one, taking each bean from the woven basket, lifting it into both hands, snapping it and placing it into a small pale enamel bowl resting beside the stools, so that the pile of prepared beans in the bowl grows gradually and continuously. A soft warm patch of slanting spring sunlight travels slowly and continuously across the floor and across both pairs of knees from left to right throughout the shot, with no jump and no step. By the end of the shot the woven basket is nearly empty, the small enamel bowl holds the prepared beans, the elderly woman is still asleep with her head lowered and the same single unbroken green long bean still held in her hand, and the younger woman sits beside her looking at her quietly; at the very last moment the elderly woman slowly lifts her head and wakes, and the younger woman gently moves the basket aside. Throughout the shot that one green long bean in the elderly woman's hand never falls, never is taken away by anyone, never disappears, never changes into another object and never moves away from her hand; it is the only object that must remain exactly where it is, and no other hand ever touches it. The basket, the bowl and every other bean never disappear or float away, and every bean taken from the basket is clearly seen moving from the basket to her hands and then into the bowl. There is no flashback, no memory image, no hard cut, no cross-space transition and no other time or place shown at any point. Both people remain seated on their stools with their feet on the ground, all movements are gradual and continuous with no sudden movement, no abrupt pose changes, no teleporting and no hard cuts, no third person appears. Both faces are clear and detailed and remain stable, the younger woman's face exactly matching <Picture 1> and the elderly woman's face exactly matching <Picture 2>; neither face changes, ages, or swaps with the other. Warm gentle slanting spring afternoon sunlight from the left, cool blue-grey shade on the walls, a soft slowly moving pale golden patch of light across their knees, no harsh spotlight, no lens flare. Refined watercolor concept-art animation style, delicate fine ink linework, loose transparent watercolor washes, granular cold-press paper texture, restrained indigo grey-green and warm cream palette, hand painted, quiet unhurried atmosphere, gentle seamless motion. Slow subtle camera push-in, very slight handheld sway.",
+      "width": 1280,
+      "height": 720,
+      "length": 192,
+      "ref_image_size": "max",
+      "vae": [
+        "5",
+        0
+      ],
+      "ref_videos": {
+        "ref_video_1": [
+          "6",
+          0
+        ]
+      },
+      "ref_images": {
+        "ref_image_1": [
+          "16",
+          0
+        ],
+        "ref_image_2": [
+          "17",
+          0
+        ],
+        "ref_image_3": [
+          "18",
+          0
+        ]
+      }
+    }
+  },
+  "8": {
+    "class_type": "BasicScheduler",
+    "inputs": {
+      "model": [
+        "3",
+        0
+      ],
+      "scheduler": "simple",
+      "steps": 20,
+      "denoise": 1.0
+    }
+  },
+  "9": {
+    "class_type": "RandomNoise",
+    "inputs": {
+      "noise_seed": 2026111427
+    }
+  },
+  "10": {
+    "class_type": "BasicGuider",
+    "inputs": {
+      "model": [
+        "3",
+        0
+      ],
+      "conditioning": [
+        "7",
+        0
+      ]
+    }
+  },
+  "11": {
+    "class_type": "KSamplerSelect",
+    "inputs": {
+      "sampler_name": "euler"
+    }
+  },
+  "12": {
+    "class_type": "SamplerCustomAdvanced",
+    "inputs": {
+      "noise": [
+        "9",
+        0
+      ],
+      "guider": [
+        "10",
+        0
+      ],
+      "sampler": [
+        "11",
+        0
+      ],
+      "sigmas": [
+        "8",
+        0
+      ],
+      "latent_image": [
+        "7",
+        1
+      ]
+    }
+  },
+  "13": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "12",
+        0
+      ],
+      "vae": [
+        "5",
+        0
+      ]
+    }
+  },
+  "14": {
+    "class_type": "CreateVideo",
+    "inputs": {
+      "images": [
+        "13",
+        0
+      ],
+      "fps": 24
+    }
+  },
+  "15": {
+    "class_type": "SaveVideo",
+    "inputs": {
+      "video": [
+        "14",
+        0
+      ],
+      "filename_prefix": "h3_r2v_shot22",
+      "format": "auto"
+    }
+  }
+}

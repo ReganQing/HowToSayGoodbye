@@ -1,0 +1,182 @@
+{
+  "1": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "minimax_h3_ref2va_pruned_nvfp4.safetensors",
+      "weight_dtype": "default"
+    }
+  },
+  "3": {
+    "class_type": "MiniMaxH3SigmaShift",
+    "inputs": {
+      "model": [
+        "1",
+        0
+      ],
+      "shift_video": 12,
+      "shift_audio": 3
+    }
+  },
+  "4": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "type": "minimax",
+      "device": "cpu"
+    }
+  },
+  "5": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "minimax_h3_video_vae_fp16.safetensors"
+    }
+  },
+  "6": {
+    "class_type": "LoadVideo",
+    "inputs": {
+      "file": "previs_shot20.mp4"
+    }
+  },
+  "16": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "SHOT20_C06b_face.png"
+    }
+  },
+  "17": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "SHOT20_E10_kitchen.png"
+    }
+  },
+  "7": {
+    "class_type": "MiniMaxH3ReferenceToVideo",
+    "inputs": {
+      "clip": [
+        "4",
+        0
+      ],
+      "prompt": "<Video 1> <Picture 1> <Picture 2> In a modest Chinese apartment kitchen in soft late afternoon light, a small folding dining table with one wooden chair, a sink and counter, shelves with bowls, a window with a pale curtain, and a gas stove with a lidded soup pot, the table and the chair and the stove and the window arranged as in the reference <Picture 2>. One person only. A Chinese woman in her late fifties with the same face exactly matching the reference portrait <Picture 1>, short dark hair with silver streaks, wearing a plain dove-grey knit cardigan. At the start of the shot she is sitting alone beside the small table, having just ended a phone call, the telephone resting on the table beside her hand; on the stove a covered soup pot is simmering, its lid lifting and settling very slightly with a thin thread of steam, and she has been quiet for a long moment. Over the course of the shot, in one continuous slow gentle sequence: she slowly rises from the chair and walks the short distance to the stove with unhurried steps, reaches out one hand and gently turns the stove knob down so the flame grows smaller and the lid gradually settles and the steam thins; then she turns back, walks to the table, picks up the telephone and dials the number again, and lifts it slowly to her ear; she speaks one quiet line as if asking her mother what she will have for dinner, with a very small sad and tender smile. By the end of the shot she is standing beside the table holding the telephone to her ear, the covered pot still on the stove with only a faint wisp of steam, and the chair, the table, the sink, the shelves and the window are unchanged in the same positions. Throughout the shot the telephone never disappears, never floats away and never changes into another object; the pot and its lid stay on the stove all the time and only the amount of steam changes. There is no flashback, no memory image, no hard cut, no cross-space transition and no other time or place shown at any point. Both of her feet stay on the ground, her rising and walking are gradual and continuous with no sudden movement, no abrupt pose changes, no teleporting and no hard cuts, no second person appears. Her face is clear and detailed and remains stable, exactly matching <Picture 1>; it does not change or age. Soft even indoor afternoon light through the window, cool blue-grey shade and a pale warm patch of sunlight on the wall, no harsh spotlight, no lens flare. Refined watercolor concept-art animation style, delicate fine ink linework, loose transparent watercolor washes, granular cold-press paper texture, restrained indigo grey-green and warm cream palette, hand painted, quiet unhurried atmosphere, gentle seamless motion. Slow subtle camera push-in, very slight handheld sway.",
+      "width": 1280,
+      "height": 720,
+      "length": 192,
+      "ref_image_size": "max",
+      "vae": [
+        "5",
+        0
+      ],
+      "ref_videos": {
+        "ref_video_1": [
+          "6",
+          0
+        ]
+      },
+      "ref_images": {
+        "ref_image_1": [
+          "16",
+          0
+        ],
+        "ref_image_2": [
+          "17",
+          0
+        ]
+      }
+    }
+  },
+  "8": {
+    "class_type": "BasicScheduler",
+    "inputs": {
+      "model": [
+        "3",
+        0
+      ],
+      "scheduler": "simple",
+      "steps": 20,
+      "denoise": 1.0
+    }
+  },
+  "9": {
+    "class_type": "RandomNoise",
+    "inputs": {
+      "noise_seed": 2026111425
+    }
+  },
+  "10": {
+    "class_type": "BasicGuider",
+    "inputs": {
+      "model": [
+        "3",
+        0
+      ],
+      "conditioning": [
+        "7",
+        0
+      ]
+    }
+  },
+  "11": {
+    "class_type": "KSamplerSelect",
+    "inputs": {
+      "sampler_name": "euler"
+    }
+  },
+  "12": {
+    "class_type": "SamplerCustomAdvanced",
+    "inputs": {
+      "noise": [
+        "9",
+        0
+      ],
+      "guider": [
+        "10",
+        0
+      ],
+      "sampler": [
+        "11",
+        0
+      ],
+      "sigmas": [
+        "8",
+        0
+      ],
+      "latent_image": [
+        "7",
+        1
+      ]
+    }
+  },
+  "13": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "12",
+        0
+      ],
+      "vae": [
+        "5",
+        0
+      ]
+    }
+  },
+  "14": {
+    "class_type": "CreateVideo",
+    "inputs": {
+      "images": [
+        "13",
+        0
+      ],
+      "fps": 24
+    }
+  },
+  "15": {
+    "class_type": "SaveVideo",
+    "inputs": {
+      "video": [
+        "14",
+        0
+      ],
+      "filename_prefix": "h3_r2v_shot20",
+      "format": "auto"
+    }
+  }
+}

@@ -1,0 +1,182 @@
+{
+ "1": {
+  "class_type": "UNETLoader",
+  "inputs": {
+   "unet_name": "minimax_h3_ref2va_pruned_nvfp4.safetensors",
+   "weight_dtype": "default"
+  }
+ },
+ "3": {
+  "class_type": "MiniMaxH3SigmaShift",
+  "inputs": {
+   "model": [
+    "1",
+    0
+   ],
+   "shift_video": 12,
+   "shift_audio": 3
+  }
+ },
+ "4": {
+  "class_type": "CLIPLoader",
+  "inputs": {
+   "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+   "type": "minimax",
+   "device": "cpu"
+  }
+ },
+ "5": {
+  "class_type": "VAELoader",
+  "inputs": {
+   "vae_name": "minimax_h3_video_vae_fp16.safetensors"
+  }
+ },
+ "6": {
+  "class_type": "LoadVideo",
+  "inputs": {
+   "file": "previs_shot10.mp4"
+  }
+ },
+ "16": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "SHOT06_C05_face.png"
+  }
+ },
+ "17": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "SHOT10_E06_bus.png"
+  }
+ },
+ "7": {
+  "class_type": "MiniMaxH3ReferenceToVideo",
+  "inputs": {
+   "clip": [
+    "4",
+    0
+   ],
+   "prompt": "<Video 1> <Picture 1> <Picture 2> Interior of a long-distance coach bus in China in the early 2000s, quiet afternoon, rows of blue-grey fabric seats, a large sliding window on the right side with teal curtains, warm sunlight streaming across the seat backs, green banyan trees and a southern city street flowing slowly past outside the window. A young Chinese woman of about twenty with shoulder-length black hair, wearing a beige knit cardigan over a white shirt and blue jeans, sits by the window in a passenger seat, facing slightly toward the camera. At the start of the shot she sits with her head lowered, looking at a small black smartphone she holds up in her right hand at chest level; it is a phone, not a paper photograph, no white border, no paper frame. CRITICAL: the phone is held like something she is reading, its screen tilted toward her own face and away from the camera, so from the camera's view we see only the matte black back of the phone and her fingers around its edges; the screen itself is never visible to the camera at any moment, only a soft warm glow spills upward from the screen onto her lowered face and cardigan. Over the course of the shot, in one continuous slow and gentle sequence: she slowly lowers the phone from her chest down onto her lap, and the phone stays resting on her lap for the rest of the shot, visible between her hands; she slowly raises her head; her gaze drifts from the phone toward the window on her left; she settles into looking out of the window, her face softly lit by the passing sunlight, quiet and thoughtful. By the end of the shot she is still seated in exactly the same position, the black phone resting on her lap under her folded hands, head turned toward the window, gazing outside, her posture unchanged and relaxed. Throughout the shot she remains seated, the phone never disappears, the bus moves gently with a soft steady vibration, the trees and street outside the window drift slowly backward, no sudden movement, no standing up, no turning around. The young woman has a clear detailed face exactly matching the reference portrait <Picture 1>, and the bus interior matches the reference <Picture 2>. Soft warm afternoon light with gentle moving light bands from the window. Refined watercolor concept-art animation style, delicate fine ink linework, loose transparent watercolor washes, granular cold-press paper texture, restrained indigo grey-green and warm cream palette, hand painted, quiet unhurried atmosphere, gentle seamless motion. Slow subtle camera push-in from across the aisle, very slight handheld sway.",
+   "width": 1280,
+   "height": 720,
+   "length": 192,
+   "ref_image_size": "max",
+   "vae": [
+    "5",
+    0
+   ],
+   "ref_videos": {
+    "ref_video_1": [
+     "6",
+     0
+    ]
+   },
+   "ref_images": {
+    "ref_image_1": [
+     "16",
+     0
+    ],
+    "ref_image_2": [
+     "17",
+     0
+    ]
+   }
+  }
+ },
+ "8": {
+  "class_type": "BasicScheduler",
+  "inputs": {
+   "model": [
+    "3",
+    0
+   ],
+   "scheduler": "simple",
+   "steps": 20,
+   "denoise": 1.0
+  }
+ },
+ "9": {
+  "class_type": "RandomNoise",
+  "inputs": {
+   "noise_seed": 2026111101
+  }
+ },
+ "10": {
+  "class_type": "BasicGuider",
+  "inputs": {
+   "model": [
+    "3",
+    0
+   ],
+   "conditioning": [
+    "7",
+    0
+   ]
+  }
+ },
+ "11": {
+  "class_type": "KSamplerSelect",
+  "inputs": {
+   "sampler_name": "euler"
+  }
+ },
+ "12": {
+  "class_type": "SamplerCustomAdvanced",
+  "inputs": {
+   "noise": [
+    "9",
+    0
+   ],
+   "guider": [
+    "10",
+    0
+   ],
+   "sampler": [
+    "11",
+    0
+   ],
+   "sigmas": [
+    "8",
+    0
+   ],
+   "latent_image": [
+    "7",
+    1
+   ]
+  }
+ },
+ "13": {
+  "class_type": "VAEDecode",
+  "inputs": {
+   "samples": [
+    "12",
+    0
+   ],
+   "vae": [
+    "5",
+    0
+   ]
+  }
+ },
+ "14": {
+  "class_type": "CreateVideo",
+  "inputs": {
+   "images": [
+    "13",
+    0
+   ],
+   "fps": 24
+  }
+ },
+ "15": {
+  "class_type": "SaveVideo",
+  "inputs": {
+   "video": [
+    "14",
+    0
+   ],
+   "filename_prefix": "h3_r2v_shot10d",
+   "format": "auto"
+  }
+ }
+}

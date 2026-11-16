@@ -1,0 +1,192 @@
+{
+ "1": {
+  "class_type": "UNETLoader",
+  "inputs": {
+   "unet_name": "minimax_h3_ref2va_pruned_nvfp4.safetensors",
+   "weight_dtype": "default"
+  }
+ },
+ "3": {
+  "class_type": "MiniMaxH3SigmaShift",
+  "inputs": {
+   "model": [
+    "1",
+    0
+   ],
+   "shift_video": 12,
+   "shift_audio": 3
+  }
+ },
+ "4": {
+  "class_type": "CLIPLoader",
+  "inputs": {
+   "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+   "type": "minimax",
+   "device": "cpu"
+  }
+ },
+ "5": {
+  "class_type": "VAELoader",
+  "inputs": {
+   "vae_name": "minimax_h3_video_vae_fp16.safetensors"
+  }
+ },
+ "6": {
+  "class_type": "LoadVideo",
+  "inputs": {
+   "file": "previs_shot18.mp4"
+  }
+ },
+ "16": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "SHOT18_C06_face.png"
+  }
+ },
+ "17": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "SHOT18_C20_face.png"
+  }
+ },
+ "18": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "SHOT18_E13_morning.png"
+  }
+ },
+ "7": {
+  "class_type": "MiniMaxH3ReferenceToVideo",
+  "inputs": {
+   "clip": [
+    "4",
+    0
+   ],
+   "prompt": "<Video 1> <Picture 1> <Picture 2> <Picture 3> In the early morning at the foot of an old Chinese residential apartment building, a folded-up street breakfast stall with a plain cloth cover, stacked small stools and a few plastic crates beside it, a large thermos and a covered pot on a low table, a low plaster wall with a patch of pale gold morning sunlight, a narrow paved path wide enough for a baby stroller, long soft shadows, the layout of the stall, the low wall, the crates and the path matching the reference <Picture 3>. Two people only. A Chinese woman in her late twenties with the same face exactly matching the reference portrait <Picture 1>, neat dark shoulder-length hair, wearing a light cream short jacket over a plain blouse and dark indigo trousers. A six-month-old Chinese baby girl with the same face exactly matching the reference portrait <Picture 2>, wrapped snugly in a plain pale cream swaddle, lying awake in a simple baby stroller with her eyes open. At the start of the shot the young woman has just brought the stroller to a gentle stop beside the low wall and is standing upright beside it, looking down at the baby; the baby is awake and looking up at her, the stroller is firmly on the paved path, the morning sunlight and the long shadows are already there. Over the course of the shot, in one continuous slow gentle sequence: the young woman gradually bends forward and down toward the stroller, slowly raises one hand and gently wipes the corner of the baby's mouth with her fingertips, then lets her fingers come to rest for a quiet unhurried moment against the baby's soft cheek; she slowly lifts her gaze and becomes still for a moment as if quietly remembering something from many years ago, and only then does she gradually draw her hand back and straighten up a little with a very small quiet smile, while the baby reaches one tiny hand toward her finger. By the end of the shot the young woman is upright again with her two hands back at her own sides, the baby is still awake in the stroller with her eyes open, the stroller is still in the same place on the path, the morning sunlight and the long soft shadows are unchanged, and the two of them are quiet together in the early light. Throughout the shot there is no flashback, no memory image, no hard cut, no cross-space transition and no other time or place shown at any point; the memory is suggested only by her stillness and her gaze. The stroller never disappears, never floats, never moves away and never changes shape; the folded breakfast stall, the cloth cover, the stacked stools, the plastic crates, the thermos, the covered pot and the low wall stay in the same positions and keep the same appearance; both the woman's feet stay on the ground and the baby stays inside the stroller; every movement of her head, her arms and her hand is gradual and continuous with no sudden movement, no abrupt pose changes and no hard cuts, no third person appears. Both faces are clear and detailed and remain stable, the young woman's face exactly matching <Picture 1>, the baby's face exactly matching <Picture 2>; neither face changes, ages, or swaps with the other. Early morning lighting: pale gold low sunlight, long soft shadows, cool blue-grey shade under the wall, no harsh spotlight, no lens flare. Refined watercolor concept-art animation style, delicate fine ink linework, loose transparent watercolor washes, granular cold-press paper texture, restrained indigo grey-green and warm cream palette, hand painted, quiet unhurried atmosphere, gentle seamless motion. Slow subtle camera push-in, very slight handheld sway.",
+   "width": 1280,
+   "height": 720,
+   "length": 192,
+   "ref_image_size": "max",
+   "vae": [
+    "5",
+    0
+   ],
+   "ref_videos": {
+    "ref_video_1": [
+     "6",
+     0
+    ]
+   },
+   "ref_images": {
+    "ref_image_1": [
+     "16",
+     0
+    ],
+    "ref_image_2": [
+     "17",
+     0
+    ],
+    "ref_image_3": [
+     "18",
+     0
+    ]
+   }
+  }
+ },
+ "8": {
+  "class_type": "BasicScheduler",
+  "inputs": {
+   "model": [
+    "3",
+    0
+   ],
+   "scheduler": "simple",
+   "steps": 20,
+   "denoise": 1.0
+  }
+ },
+ "9": {
+  "class_type": "RandomNoise",
+  "inputs": {
+   "noise_seed": 2026111420
+  }
+ },
+ "10": {
+  "class_type": "BasicGuider",
+  "inputs": {
+   "model": [
+    "3",
+    0
+   ],
+   "conditioning": [
+    "7",
+    0
+   ]
+  }
+ },
+ "11": {
+  "class_type": "KSamplerSelect",
+  "inputs": {
+   "sampler_name": "euler"
+  }
+ },
+ "12": {
+  "class_type": "SamplerCustomAdvanced",
+  "inputs": {
+   "noise": [
+    "9",
+    0
+   ],
+   "guider": [
+    "10",
+    0
+   ],
+   "sampler": [
+    "11",
+    0
+   ],
+   "sigmas": [
+    "8",
+    0
+   ],
+   "latent_image": [
+    "7",
+    1
+   ]
+  }
+ },
+ "13": {
+  "class_type": "VAEDecode",
+  "inputs": {
+   "samples": [
+    "12",
+    0
+   ],
+   "vae": [
+    "5",
+    0
+   ]
+  }
+ },
+ "14": {
+  "class_type": "CreateVideo",
+  "inputs": {
+   "images": [
+    "13",
+    0
+   ],
+   "fps": 24
+  }
+ },
+ "15": {
+  "class_type": "SaveVideo",
+  "inputs": {
+   "video": [
+    "14",
+    0
+   ],
+   "filename_prefix": "h3_r2v_shot18",
+   "format": "auto"
+  }
+ }
+}
