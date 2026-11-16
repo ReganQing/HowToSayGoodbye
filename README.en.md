@@ -6,7 +6,7 @@
 *We Must Learn to Say Goodbye, and Grow Through It* (我们总要学会告别，并在告别中成长)
 
 [![Python 3.12](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)](https://www.python.org/)
-[![Blender](https://img.shields.io/badge/Blender-4.x-F5792A?logo=blender&logoColor=white)](https://www.blender.org/)
+[![Blender](https://img.shields.io/badge/Blender-5.2-F5792A?logo=blender&logoColor=white)](https://www.blender.org/)
 [![FFmpeg](https://img.shields.io/badge/FFmpeg-7.x-007808?logo=ffmpeg&logoColor=white)](https://ffmpeg.org/)
 [![Scripts](https://img.shields.io/badge/Scripts-148-26364F)](#script-map)
 [![No Credentials](https://img.shields.io/badge/Credentials-none-brightgreen)](SECURITY.md)
@@ -96,10 +96,12 @@ Fifteen `previs_shot*.py` files import `previs_shot14`; `roughcut_v09.py` reuses
 | --- | --- | --- |
 | Python 3.12+ | All scripts | ✅ Yes |
 | Pillow / NumPy / imageio | Contact sheets, frame extraction, cropping | ✅ Yes |
-| Blender 4.x (CLI) | `bpy` previz and four-view renders | Blender scripts only |
+| Blender 5.2 (CLI) | `bpy` previz and four-view renders | Blender scripts only |
 | FFmpeg / ffprobe | Rough cuts, dissolves, comparison film, numeric probes | Editing / QC only |
 | ComfyUI (local `127.0.0.1:8188`) | H3 Ref2VA generation | Generation scripts only |
 | Lux3D API credential | Cloud modelling / auto-rig | Modelling scripts only; see [SECURITY.md](SECURITY.md) |
+
+> **Blender version note**: This project was built and verified on **Blender 5.2** (see the environment section of `HANDOFF.md`). The scripts rely on the 5.x layered Action API (`channelbag`, `NlaStrip.use_reverse`, ...). Blender 4.x removed `Action.groups` / `Action.fcurves` and will fail on these scripts — use 5.2 or another 5.x build.
 
 ### Example commands
 

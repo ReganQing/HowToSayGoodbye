@@ -5,7 +5,7 @@
 **27 镜水彩 AI 动画短片《我们总要学会告别，并在告别中成长》· 创作脚本集**
 
 [![Python 3.12](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)](https://www.python.org/)
-[![Blender](https://img.shields.io/badge/Blender-4.x-F5792A?logo=blender&logoColor=white)](https://www.blender.org/)
+[![Blender](https://img.shields.io/badge/Blender-5.2-F5792A?logo=blender&logoColor=white)](https://www.blender.org/)
 [![FFmpeg](https://img.shields.io/badge/FFmpeg-7.x-007808?logo=ffmpeg&logoColor=white)](https://ffmpeg.org/)
 [![Scripts](https://img.shields.io/badge/Scripts-148-26364F)](#脚本地图)
 [![No Credentials](https://img.shields.io/badge/Credentials-none-brightgreen)](SECURITY.md)
@@ -95,10 +95,12 @@ flowchart LR
 | --- | --- | --- |
 | Python 3.12+ | 全部脚本运行时 | ✅ 必需 |
 | Pillow / NumPy / imageio | 联系表、抽帧、裁切 | ✅ 必需 |
-| Blender 4.x（命令行） | `bpy` 白模预演与四视图渲染 | 仅 Blender 类脚本 |
+| Blender 5.2（命令行） | `bpy` 白模预演与四视图渲染 | 仅 Blender 类脚本 |
 | FFmpeg / ffprobe | 粗剪、叠化、对比片、数值探测 | 仅剪辑 / QC 类脚本 |
 | ComfyUI（本地 `127.0.0.1:8188`） | H3 Ref2VA 生成 | 仅生成类脚本 |
 | Lux3D API 凭据 | 云端建模 / 绑骨 | 仅建模类脚本，见 [SECURITY.md](SECURITY.md) |
+
+> **Blender 版本说明**：本项目实测环境为 **Blender 5.2**（见 `HANDOFF.md` §3 环境要点）。脚本使用 5.x 的分层 Action API（`channelbag`、`NlaStrip.use_reverse` 等）；4.x 中 `Action.groups` / `Action.fcurves` 已被移除，直接运行会报错。请使用 5.2 或同代 5.x 版本。
 
 ### 命令示例
 
